@@ -75,7 +75,7 @@
 
 (defn display
   "display records selected by where clause, sorted by order-by clause. Display specified keys or all if none specified.
-  e.g. (display (where :account \"my-account\") (order-by :name) :name :code)"
+  e.g. (display (where mydb :account \"my-account\") (order-by :name) :name :code)"
   [where orderby & keys-to-display]
   (if-not (empty? where)
     (print-table
@@ -135,7 +135,7 @@
 
 (defn update
   "modify records based on where clause, having their specified value changed, or added, for the specified key.
-  e.g. (update mydb (where :account \"my-account\") :code \"12345\")"
+  e.g. (update mydb (where mydb :account \"my-account\") :code \"12345\")"
   [db where & keys-values]
   {:pre [(or (set? where) (seq? where)) ; when 'where' return an empty seq
          (every? map? where)
@@ -151,7 +151,7 @@
 
 (defn delete
   "delete records base on where clause.
-  e.g. (delete mydb (where :account \"my-account\"))"
+  e.g. (delete mydb (where mydb :account \"my-account\"))"
   [db where]
   {:pre [(or (set? where) (seq? where)) ; when 'where' return an empty seq
          (every? map? where)]}
@@ -164,7 +164,7 @@
 
 (defn delete-key
   "modify records based on where clause, having their specified key (and associated value) removed.
-  e.g. (delete-key mydb (where :account \"my-account\") :code)"
+  e.g. (delete-key mydb (where mydb :account \"my-account\") :code)"
   [db where & keys-to-delete]
   {:pre [(or (set? where) (seq? where)) ; when 'where' return an empty seq
          (every? map? where)
@@ -179,7 +179,7 @@
 
 (defn rename-key
   "modify records based on where clause, having their specified key renamed with new name.
-  e.g. (rename-key mydb (where:account \"my-account\") :client :customer)"
+  e.g. (rename-key mydb (where mydb :account \"my-account\") :client :customer)"
   [db where & keys-values]
   {:pre [(or (set? where) (seq? where)) ; when 'where' return an empty seq
          (every? map? where)
