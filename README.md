@@ -50,8 +50,8 @@ With Leiningen:
 ;filter on :account "my-account" OR :account "other-account"
 (select from mydb where :account "my-account" :account "other-account")
 
-;return the whole db
-(select)
+;return the whole database
+(select from mydb)
 
 ```
 
