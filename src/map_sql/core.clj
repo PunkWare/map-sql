@@ -71,7 +71,7 @@
   "SQL-like syntax for capturing the source database.
   e.g (from mydb where :account \"my-account\")"
   [db & where-clause]
-  `(~(first where-clause) ~db ~@(rest where-clause)))
+  `(where ~db ~@(rest where-clause)))
 
 (defn display
   "display records selected by where clause, sorted by order-by clause. Display specified keys or all if none specified.
