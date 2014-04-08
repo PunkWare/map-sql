@@ -28,16 +28,16 @@ With Leiningen:
 (delete-key mydb (where :account "my-account") :code)
 
 ;modify records based on where keys-values, having their specified key renamed with new name.
-(rename-key mydb (where :account "my-account") :client :customer)
+(rename-key mydb (where :account "my-account") :code :password)
 
 ;delete records base on where clause.
 (delete mydb (where :account "my-account"))
 
 ;display records selected by where keys-values, sorted by order-by clause. Display specified keys or all if none specified.
-(display (where :account "my-account") (order-by :name) :name :code)
+(display (where :account "my-account") (order-by :name) :name :password)
 
 ;or with a more friedly syntax using the select macro:
-(select :name :code from mydb where :account "my-account" order-by :name)
+(select :name :password from mydb where :account "my-account" order-by :name)
 ```
 
 ## License
