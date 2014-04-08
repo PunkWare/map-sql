@@ -74,8 +74,8 @@
   `(~(first where-clause) ~db ~@(rest where-clause)))
 
 (defn display
-  "display records selected by where clause, sorted by orderby clause. Display specified keys or all if none specified.
-  e.g. (display (where :account \"my-account\") (orderby :name) :name :code)"
+  "display records selected by where clause, sorted by order-by clause. Display specified keys or all if none specified.
+  e.g. (display (where :account \"my-account\") (order-by :name) :name :code)"
   [where orderby & keys-to-display]
   (if-not (empty? where)
     (print-table
