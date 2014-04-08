@@ -38,6 +38,21 @@ With Leiningen:
 
 ;or with a more friedly syntax using the select macro:
 (select :name :password from mydb where :account "my-account" order-by :name)
+
+;other valid requests
+
+;diplay all keys
+(select from mydb where :account "my-account" order-by :name)
+
+;no order-by defined
+(select from mydb where :account "my-account")
+
+;filter on :account "my-account" OR :account "other-account"
+(select from mydb where :account "my-account" :account "other-account")
+
+;return the whole db
+(select)
+
 ```
 
 ## License
