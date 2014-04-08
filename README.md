@@ -34,7 +34,7 @@ With Leiningen:
 (delete mydb (where mydb :account "my-account"))
 
 ;display records selected by where keys-values, sorted by order-by clause. Display specified keys or all if none specified.
-(display (where :account "my-account") (order-by :name) :name :password)
+(display (where mydb :account "my-account") (order-by :name) :name :password)
 
 ;or with a more friedly syntax using the select macro:
 (select :name :password from mydb where :account "my-account" order-by :name)
