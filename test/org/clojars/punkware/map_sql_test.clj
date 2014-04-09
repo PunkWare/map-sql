@@ -1,9 +1,9 @@
 (ns #^{:doc "Testing suite for map-sql.core"
        :author "Jean-Marc Decouleur <jm.decouleur@me.com>"
        :version "0.1.0"}
-  com.punkware.map-sql-test
+  org.clojars.punkware.map-sql-test
   (:require [clojure.test :refer :all]
-            [com.punkware.map-sql :refer :all]))
+            [org.clojars.punkware.map-sql :refer :all]))
 
 (defmacro with-private-fns [[ns fns] & tests]
   "Refers private fns from ns and runs tests in context."
@@ -53,7 +53,7 @@
          1)
         "when a record matches several keys-values, the record should be returned only once."))
 
-  (with-private-fns [com.punkware.map-sql [p-insert p-modify p-delete p-rename]]
+  (with-private-fns [org.clojars.punkware.map-sql [p-insert p-modify p-delete p-rename]]
 
     (deftest insert-record
       (is (=
