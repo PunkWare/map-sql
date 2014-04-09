@@ -1,6 +1,7 @@
 # map-sql
 
-A Clojure library designed to provide SQL-like functions (and macros) for data structure based on maps.
+A Clojure library designed to provide SQL-like functions (and macros) for a data structure based on maps.
+The library is designed to be used with the REPL.
 
 ## Install
 
@@ -13,7 +14,7 @@ With Leiningen:
 ## Usage
 
 ```clj
-(require 'map-sql.core)
+(require 'com.punkware.map-sql)
 
 ;create the database and return it.
 (def mydb (create-db))
@@ -30,8 +31,14 @@ With Leiningen:
 ;modify records based on where keys-values, having their specified key renamed with new name.
 (rename-key mydb (where mydb :account "my-account") :code :password)
 
-;delete records base on where clause.
+;delete records based on where clause.
 (delete mydb (where mydb :account "my-account"))
+
+;where with fuzzy comparison
+(where mydb :account "my-account")
+
+;where with strict comparison
+(where-strict mydb :account "my-account")
 
 ;display records selected by where keys-values, sorted by order-by clause. Display specified keys or all if none specified.
 (display (where mydb :account "my-account") (order-by :name) :name :password)
@@ -44,16 +51,20 @@ With Leiningen:
 ;diplay all keys
 (select from mydb where :account "my-account" order-by :name)
 
-;no order-by defined
+;no order-by defined, fuzzy comparison
 (select from mydb where :account "my-account")
+
+;no order-by defined, strict comparison
+(select from mydb where-strict :account "my-account")
 
 ;filter on :account "my-account" OR :account "other-account"
 (select from mydb where :account "my-account" :account "other-account")
 
 ;return the whole database
 (select from mydb)
-
 ```
+
+The database can then be saved to disk, load from disk with regular spit/slurp functions.
 
 ## License
 
