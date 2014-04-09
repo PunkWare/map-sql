@@ -49,7 +49,7 @@ With Leiningen:
 ;other valid requests
 
 ;diplay all keys
-(select from mydb where :account "my-account" order-by :name)
+(select from mydb where :account "my-account" order-by :name :code)
 
 ;no order-by defined, fuzzy comparison
 (select from mydb where :account "my-account")
