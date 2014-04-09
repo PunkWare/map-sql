@@ -35,7 +35,7 @@ With Leiningen:
 (delete mydb (where mydb :account "my-account"))
 
 ;where with fuzzy comparison
-(where mydb :account "my-account")
+(where mydb :account "account")
 
 ;where with strict comparison
 (where-strict mydb :account "my-account")
