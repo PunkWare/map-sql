@@ -10,7 +10,7 @@ I publish releases to [Clojars]
 
 [Leiningen] dependency information:
 
-    [org.clojars.punkware.map-sql "0.1.1"]
+    [map-sql "0.1.1"]
 
 [Clojars]: http://clojars.org/map-sql
 [Leiningen]: http://leiningen.org/
