@@ -14,8 +14,13 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 ## Usage
 
 ```clj
-(require 'com.punkware.map-sql)
+(ns com.example.your-application
+  (:require [org.clojars.punkware.map-sql :as map-sql]))
+```
 
+### Main functionalities
+
+```clj
 ;create the database and return it.
 (def mydb (create-db))
 

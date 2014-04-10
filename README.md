@@ -3,19 +3,31 @@
 A Clojure library designed to provide SQL-like functions (and macros) for a data structure based on maps.
 The library is designed to be used with the REPL.
 
-## Install
 
-With Leiningen:
+## Releases and Dependency Information
 
-``` clj
-[map-sql "0.1.0"]
-```
+I publish releases to [Clojars]
+
+[Leiningen] dependency information:
+
+    [org.clojars.punkware.map-sql "0.1.1"]
+
+[Clojars]: http://clojars.org/map-sql
+[Leiningen]: http://leiningen.org/
+
+I have successfully tested 'map-sql' with Clojure version 1.5.1.
+
 
 ## Usage
 
 ```clj
-(require 'com.punkware.map-sql)
+(ns com.example.your-application
+  (:require [org.clojars.punkware.map-sql :as map-sql]))
+```
 
+### Main functionalities
+
+```clj
 ;create the database and return it.
 (def mydb (create-db))
 
