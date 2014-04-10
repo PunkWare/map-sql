@@ -1,6 +1,6 @@
-(defproject map-sql "0.1.0"
+(defproject map-sql "0.1.1-SNAPSHOT"
   :description "SQL functions for maps."
-  :url "http://example.com/FIXME"
+  :url "https://github.com/PunkWare/map-sql"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]

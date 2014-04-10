@@ -1,6 +1,6 @@
 (ns #^{:doc "SQL functions for maps."
        :author "Jean-Marc Decouleur <jm.decouleur@me.com>"
-       :version "0.1.0"}
+       :version "0.1.1-SNAPSHOT"}
   org.clojars.punkware.map-sql
   (:require
    [clojure.pprint :refer [print-table]]
