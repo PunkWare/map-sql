@@ -4,4 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [inflections "0.9.6"]])
+                 [inflections "0.9.6"]]
+  :url "https://github.com/PunkWare/map-sql"
+  :scm {:name "git"
+        :url "https://github.com/PunkWare/map-sql"}
+  :deploy-repositories [["clojars" {:creds :gpg}]])
