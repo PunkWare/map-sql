@@ -10,7 +10,7 @@ I publish releases to [Clojars]
 
 [Leiningen] dependency information:
 
-    [map-sql "0.1.1"]
+    [map-sql "0.2.0"]
 
 [Clojars]: http://clojars.org/map-sql
 [Leiningen]: http://leiningen.org/
