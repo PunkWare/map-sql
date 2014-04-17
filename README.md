@@ -78,6 +78,8 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1.
 
 The database can then be saved to disk, load from disk with regular spit/slurp functions.
 
+See the documentation for more details.
+
 ## License
 
 Copyright © 2014 Jean-Marc Decouleur

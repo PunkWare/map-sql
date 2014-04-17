@@ -4,7 +4,7 @@ A Clojure library designed to provide SQL-like functions (and macros) for a data
 The library is designed to be used with the REPL.
 
 The database is actually a set of maps help in an atom. Because of the set container, not duplicates maps ("records") are allowed.
-The maps are assumed to have keywords as keys and srings as values. Each map can have different keywords.
+The maps are assumed to have keywords as keys. Each map can have different keywords.
 
 The provided functions aim to manipulate the database records with a SQL-like syntax.
 

@@ -1,6 +1,6 @@
 (ns #^{:doc "SQL functions for maps."
        :author "Jean-Marc Decouleur <jm.decouleur@me.com>"
-       :version "0.1.1"}
+       :version "0.2.0"}
   org.clojars.punkware.map-sql
   (:require
    [clojure.pprint :refer [print-table]]
@@ -124,8 +124,7 @@
   e. g. (insert mydb :name \"my-name\" :account \"my-account\" :code \"12345\")"
   [db & keys-values]
   {:pre [(> (count keys-values) 1)
-         (every? keyword? (map first (partition 2 keys-values)))
-         (every? string? (map second (partition 2 keys-values)))]}
+         (every? keyword? (map first (partition 2 keys-values)))]}
   (try
     (swap! db p-insert (apply concat (partition 2 keys-values))) ;partition use to remove possible orphan key
     (println "1 record inserted.")
@@ -140,8 +139,7 @@
   {:pre [(or (set? where) (seq? where)) ; when 'where' return an empty seq
          (every? map? where)
          (> (count keys-values) 1)
-         (every? keyword? (map first (partition 2 keys-values)))
-         (every? string? (map second (partition 2 keys-values)))]}
+         (every? keyword? (map first (partition 2 keys-values)))]}
   (try
     (swap! db p-modify assoc where (apply concat (partition 2 keys-values))) ;partition use to remove possible orphan key
     (println (str (pluralize (count where) "record") " updated."))

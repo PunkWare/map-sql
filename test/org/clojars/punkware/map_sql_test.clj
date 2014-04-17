@@ -1,6 +1,6 @@
 (ns #^{:doc "Testing suite for map-sql.core"
        :author "Jean-Marc Decouleur <jm.decouleur@me.com>"
-       :version "0.1.1"}
+       :version "0.2.0"}
   org.clojars.punkware.map-sql-test
   (:require [clojure.test :refer :all]
             [org.clojars.punkware.map-sql :refer :all]))
