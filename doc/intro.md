@@ -58,7 +58,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 ```
 
 
-'select' return records optionally filtered or ordered. Keys returned can be restricted.
+#### 'select' return records optionally filtered or ordered. Keys returned can be restricted.
 
 ```clj
 ;the whole database
@@ -101,7 +101,6 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 
 => 2 records printed.
 => nil
-
 
 ;'delete' remove records from database.
 (delete mydb (where mydb :public-for-nsa true))

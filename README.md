@@ -58,11 +58,10 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1 and 1.6.0.
 
 ;'delete' remove records from database.
 (delete mydb (where mydb :public-for-nsa true))
-=> #{}
 ```
 
 
-'select' return records optionally filtered or ordered. Keys returned can be restricted.
+#### 'select' return records optionally filtered or ordered. Keys returned can be restricted.
 
 ```clj
 ;the whole database
