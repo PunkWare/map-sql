@@ -1,6 +1,6 @@
 (ns #^{:doc "Testing suite for map-sql.core"
        :author "Jean-Marc Decouleur <jm.decouleur@me.com>"
-       :version "0.2.0"}
+       :version "0.3.0"}
   org.clojars.punkware.map-sql-test
   (:require [clojure.test :refer :all]
             [org.clojars.punkware.map-sql :refer :all]))
@@ -17,7 +17,7 @@
 (use-fixtures :once db-initialize)
 
 (testing "map-sql.core"
-  (deftest filter-record
+  (deftest filter-records
     (is (=
          (get (first (where (atom db) :account "bar-account")) :code)
          "bar-code")
@@ -31,6 +31,11 @@
     (is (=
          (get (first (where (atom db) :foo "bar-account")) :code)
          nil)
+        "a first record with key :foo should not exist.")
+
+    (is (=
+         (get (first (where-contains (atom db) :account "bar")) :account)
+         "bar-account")
         "a first record with key :foo should not exist.")
 
     (is (=
@@ -53,7 +58,50 @@
          1)
         "when a record matches several keys-values, the record should be returned only once."))
 
-  (with-private-fns [org.clojars.punkware.map-sql [p-insert p-modify p-delete p-rename]]
+  (deftest ordered-records
+    (is (=
+         (:code (last (order-by #{{:name "foo1" :account "foo-account1" :code "foo-code1"} {:name "foo2" :account "foo-account2" :code "foo-code2"} {:name "foo1" :account "foo-account2" :code "foo-code3"}} :code)))
+         "foo-code3")
+        "records sould be ordered by :code ascending")
+
+    (is (=
+         (:code (last (order-by #{{:name "foo1" :account "foo-account1" :code "foo-code1"} {:name "foo2" :account "foo-account2" :code "foo-code2"} {:name "foo1" :account "foo-account2" :code "foo-code3"}} :name)))
+         "foo-code2")
+        "records sould be ordered by :name ascending")
+
+    (is (=
+         (:code (last (order-by #{{:name "foo1" :account "foo-account2" :code "foo-code1"} {:name "foo1" :account "foo-account1" :code "foo-code3"}} :name :account)))
+         "foo-code1")
+        "records sould be ordered by :name :account ascending"))
+
+  (deftest select-records
+    (is (=
+         (select from (atom #{{:a 1, :c 2, :b 3} {:a 3, :c 1, :b 2} {:a 1, :c 3, :b 1}}))
+         #{{:a 1, :c 2, :b 3} {:a 3, :c 1, :b 2} {:a 1, :c 3, :b 1}})
+        "should reurn the whole database.")
+
+    (is (=
+         (select from (atom #{{:a 1, :c 2, :b 3} {:a 3, :c 1, :b 2} {:a 1, :c 3, :b 1}}) where :b 1 )
+         #{{:a 1, :c 3, :b 1}})
+        "should return only record where b = 1.")
+
+    (is (=
+         (select from (atom #{{:a 1, :c 2, :b 3} {:a 3, :c 1, :b 2} {:a 1, :c 3, :b 1}}) where :a 1 )
+         #{{:a 1, :c 3, :b 1} {:a 1, :c 2, :b 3}})
+        "should return only records where a = 1.")
+
+    (is (=
+         (sort (distinct (apply concat (map keys (select :b :c from (atom #{{:a 1, :c 2, :b 3} {:a 3, :c 1, :b 2} {:a 1, :c 3, :b 1}}))))))
+         [:b :c])
+        "should return only :b & :c keys.")
+
+    (is (=
+         (:b (last (select :b :c from (atom #{{:a 1, :c 2, :b 3} {:a 3, :c 1, :b 2} {:a 1, :c 3, :b 1}}) where :b 1 :a 1 order-by :b)))
+         3)
+        "should return only :b & :c keys for records where a = 1 or b =1 ordered by b ascending."))
+
+
+  (with-private-fns [org.clojars.punkware.map-sql [p-insert p-modify p-delete p-rename p-keep-keys]]
 
     (deftest insert-record
       (is (=
@@ -61,7 +109,7 @@
            2)
           "after inserting a second different record, there should be 2 records in the database."))
 
-    (deftest update-record
+    (deftest update-records
       (is (=
            (get (first (p-modify db assoc (where (atom db) :name "bar") '(:code "mynewcode"))) :code)
            "mynewcode")
@@ -84,7 +132,7 @@
 
       (is (=
            (get (first (p-rename db (where (atom db) :name "bar") '(:code :password))) :code)
-          nil)
+           nil)
           "after renaming a key in the first record, :code should not exist anymore.")
 
       (is (=
@@ -98,7 +146,7 @@
           "after trying to rename a key that doesn't exist in the first record, the renamed key should not exist."))
 
 
-    (deftest delete-record
+    (deftest delete-records
       (is (=
            (count (p-delete db (where (atom db) :name "bar")))
            0)

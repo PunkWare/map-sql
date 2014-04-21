@@ -1,7 +1,6 @@
-# map-sql
+# `map-sql`
 
-A Clojure library designed to provide SQL-like functions (and macros) for a data structure based on maps.
-The library is designed to be used with the REPL.
+A Clojure library designed to provide SQL-like syntax for small in-memory database.
 
 
 ## Releases and Dependency Information
@@ -10,12 +9,12 @@ I publish releases to [Clojars]
 
 [Leiningen] dependency information:
 
-    [map-sql "0.2.0"]
+    [map-sql "0.3.0"]
 
 [Clojars]: http://clojars.org/map-sql
 [Leiningen]: http://leiningen.org/
 
-I have successfully tested 'map-sql' with Clojure version 1.5.1.
+I have successfully tested 'map-sql' with Clojure version 1.5.1 and 1.6.0.
 
 
 ## Usage
@@ -28,55 +27,70 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1.
 ### Main functionalities
 
 ```clj
-;create the database and return it.
+;create the database mydb and return it.
 (def mydb (create-db))
+=> #'user/mydb
 
-;add a new record with specified keys and values.
-(insert mydb :name "my-name" :account "my-account" :code "12345")
+;'insert' add a new record with specified keys and values. As side-effect mydb is updated.
+(insert mydb :name "name1" :account "account1" :code 12345)
 
-;modify records based on where keys-values, having their specified value changed, or added, for the specified key.
-(update mydb (where mydb :account "my-account") :code "54321")
+;add a second record.
+(insert mydb :name "name2" :account "account2" :code 111222 :client "CL-2")
 
-;modify records based on where keys-values, having their specified key (and associated value) removed.
-(delete-key mydb (where mydb :account "my-account") :code)
+;'update' modify records having their values changed, or added, for the given keys.
+; as side-effect mydb is updated.
+(update mydb (where mydb :account "account1") :code 54321 :name "new-name")
 
-;modify records based on where keys-values, having their specified key renamed with new name.
-(rename-key mydb (where mydb :account "my-account") :code :password)
+;'delete-key' modify records having their keys (and associated values) removed.
+; as side-effect mydb is updated.
+(delete-key mydb (where mydb :account "account2") :client :code)
 
-;delete records based on where clause.
-(delete mydb (where mydb :account "my-account"))
+;'update' can also modify records to add values for the given keys.
+; as side-effect mydb is updated.
+(update mydb (where mydb :account "account2") :code 12345)
 
-;where with fuzzy comparison
-(where mydb :account "account")
+; can 'update' several records
+(update mydb (where mydb) :secret true)
 
-;where with strict comparison
-(where-strict mydb :account "my-account")
+;'rename-keys' modify records having their keys renamed with new values.
+; as side-effect mydb is updated.
+(rename-key mydb (where mydb) :secret :public-for-nsa)
 
-;display records selected by where keys-values, sorted by order-by clause. Display specified keys or all if none specified.
-(display (where mydb :account "my-account") (order-by :name) :name :password)
-
-;or with a more friedly syntax using the select macro:
-(select :name :password from mydb where :account "my-account" order-by :name)
-
-;other valid requests
-
-;diplay all keys
-(select from mydb where :account "my-account" order-by :name :code)
-
-;no order-by defined, fuzzy comparison
-(select from mydb where :account "my-account")
-
-;no order-by defined, strict comparison
-(select from mydb where-strict :account "my-account")
-
-;filter on :account "my-account" OR :account "other-account"
-(select from mydb where :account "my-account" :account "other-account")
-
-;return the whole database
-(select from mydb)
+;'delete' remove records from database.
+(delete mydb (where mydb :public-for-nsa true))
+=> #{}
 ```
 
-The database can then be saved to disk, load from disk with regular spit/slurp functions.
+
+'select' return records optionally filtered or ordered. Keys returned can be restricted.
+
+```clj
+;the whole database
+(select from mydb)
+
+;specific keys
+(select :name :account :code from mydb)
+
+;specific criteria with strict comparison.
+(select :name :account :code from mydb where :name "new-name")
+
+;specific criteria with contain comparison.
+(select :name :account :code from mydb where-contains :name "name")
+
+;several criterias witj logical 'or' comparison
+(select :name :account :code from mydb where :name "name2" :code 54321)
+
+;returned in a specific order (ascending)
+(select :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
+
+;multiple orders specified
+(select :name :account from mydb where :name "name2" :code 54321 order-by :public-for-nsa :account)
+```
+
+```clj
+;pretty print records on screen
+(print-db :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
+```
 
 See the documentation for more details.
 
