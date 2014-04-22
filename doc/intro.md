@@ -77,7 +77,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 (select :name :account :code from mydb where-contains :name "name")
 => #{{:code 54321, :account "account1", :name "new-name"} {:code 12345, :account "account2", :name "name2"}}
 
-;several criterias witj logical 'or' comparison
+;several criterias with logical 'or' comparison
 (select :name :account :code from mydb where :name "name2" :code 54321)
 => #{{:code 54321, :account "account1", :name "new-name"} {:code 12345, :account "account2", :name "name2"}}
 
@@ -85,7 +85,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 (select :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
 => #{{:code 12345, :account "account2", :name "name2"} {:code 54321, :account "account1", :name "new-name"}}
 
-;multiple orders specified
+;multiple orders
 (select :name :account from mydb where :name "name2" :code 54321 order-by :public-for-nsa :account)
 => #{{:account "account1", :name "new-name"} {:account "account2", :name "name2"}}
 ```

@@ -76,13 +76,13 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1 and 1.6.0.
 ;specific criteria with contain comparison.
 (select :name :account :code from mydb where-contains :name "name")
 
-;several criterias witj logical 'or' comparison
+;several criterias with logical 'or' comparison
 (select :name :account :code from mydb where :name "name2" :code 54321)
 
 ;returned in a specific order (ascending)
 (select :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
 
-;multiple orders specified
+;multiple orders
 (select :name :account from mydb where :name "name2" :code 54321 order-by :public-for-nsa :account)
 ```
 
