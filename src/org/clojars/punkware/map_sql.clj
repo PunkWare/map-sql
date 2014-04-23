@@ -1,6 +1,6 @@
 (ns #^{:doc "SQL-like syntax for maps."
        :author "Jean-Marc Decouleur <punkware@free.fr>"
-       :version "0.3.2"}
+       :version "0.3.3"}
   org.clojars.punkware.map-sql
   (:require
    [clojure.pprint :refer [print-table]]
@@ -10,7 +10,7 @@
 
 (def ^{:private true :const true}
   #^{:doc "the error message that is printed when a database validation error is detected."}
-  db-validation-error-message "database validation failed, maybe because of blank record, duplicate records, or ill-formed record (no keyword / string). Insert aborted.")
+  db-validation-error-message "database validation failed, maybe because of blank record, or ill-formed record. Operation aborted.")
 
 ; PRIVATE functions
 

@@ -17,7 +17,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
   (:require [org.clojars.punkware.map-sql :as map-sql]))
 ```
 
-### Main functionalities
+## Main functionalities
 
 ```clj
 ;create the database mydb and return it.
@@ -58,7 +58,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 ```
 
 
-#### 'select' return records optionally filtered or ordered. Keys returned can be restricted.
+'select' return records optionally filtered or ordered. Keys returned can be restricted.
 
 ```clj
 ;the whole database
@@ -90,6 +90,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => #{{:account "account1", :name "new-name"} {:account "account2", :name "name2"}}
 ```
 
+'print-db' behaves just like 'select' but print result on screen.
 
 ```clj
 ;pretty print records on screen
@@ -107,7 +108,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => #{}
 ```
 
-#### The database can be saved to disk and load from disk with regular spit/slurp functions.
+the database can be saved to disk and load from disk with regular spit/slurp functions.
 
 ```clj
 ;save to disk
@@ -119,15 +120,15 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 (def new-db (atom (read-string (slurp "my-db-as-file.data"))))
 ```
 
-#### If a validator is defined for the database, 'insert', 'update', 'delete-key' and 'rename-key'
-#### will return an error message if the conditions of the validator return false.
+if a validator is defined for the database, 'insert', 'update', 'delete-key' and 'rename-key'
+will return an error message if the conditions of the validator return false.
 
 ```clj
 (defn db-validator [new-db] (if-not (empty? new-db) (apply distinct? (map :name new-db))))
 (set-validator! mydb db-validator)
 
 ;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
-;trying to insert a new record with "name2" that already exists in the database
+;trying to insert a new record with "name2" that already exists in the database...
 (insert mydb :name "name2" :client "CL-3")
 => database validation failed
 ```
