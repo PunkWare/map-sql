@@ -1,10 +1,10 @@
 (ns #^{:doc "SQL-like syntax for maps."
        :author "Jean-Marc Decouleur <punkware@free.fr>"
-       :version "0.3.1"}
+       :version "0.3.2"}
   org.clojars.punkware.map-sql
   (:require
    [clojure.pprint :refer [print-table]]
-   [clojure.set :refer [difference union rename project]]
+   [clojure.set :refer [difference union rename]]
    [clojure.string :refer [upper-case]]
    [inflections.core :refer [pluralize]]))
 
@@ -71,18 +71,25 @@
   (atom #{}))
 
 
-(defmacro select
-  "return (optionally only certain keys of) records, optionally filtered by the 'where' clause, optionally ordered by the 'order-by' clause.
-  e.g. (select :name :code from mydb where :account \"my-account\" order-by :name)"
-  [& args]
+(defmacro from
+  "SQL-like syntax for capturing the source database.
+  e.g. (from mydb where :account \"my-account\")"
+  [db & where-clause]
+  `(~(if (empty? where-clause) 'where (first where-clause)) ~db ~@(rest where-clause)))
+
+
+(defmacro parse-sql
+  "convert SQL-like syntax to regular function calls.
+  FOR INTERNAL USE ONLY. Should not be called directly."
+  [output args]
   (let
     [order-by-args (drop-while #(not= 'order-by %) args)
      where-args (drop-while #(not= 'from %)(take-while #(not= 'order-by %) args))
      display-args (take-while #(and (not= 'from %) (not= 'order-by %)) args)]
-    `(keep-keys
+    `(~output
       ~(if (empty? order-by-args)
-         (if (empty? where-args) (list 'from) where-args)
-         (list 'apply 'order-by (if (empty? where-args) (list 'from) where-args) (into [] (rest order-by-args))))
+         where-args
+         `(order-by ~where-args ~@(rest order-by-args)))
       ~@(if (empty? display-args) nil display-args))))
 
 
@@ -90,22 +97,14 @@
   "same as 'select', but print the records on screen.
   e.g. (print-db :name :code from mydb where :account \"my-account\" order-by :name)"
   [& args]
-  (let
-    [order-by-args (drop-while #(not= 'order-by %) args)
-     where-args (drop-while #(not= 'from %)(take-while #(not= 'order-by %) args))
-     display-args (take-while #(and (not= 'from %) (not= 'order-by %)) args)]
-    `(#'org.clojars.punkware.map-sql/p-table-db
-      ~(if (empty? order-by-args)
-         (if (empty? where-args) (list 'from) where-args)
-         (list 'apply 'order-by (if (empty? where-args) (list 'from) where-args) (into [] (rest order-by-args))))
-      ~@(if (empty? display-args) nil display-args))))
+    `(parse-sql #'org.clojars.punkware.map-sql/p-table-db ~args))
 
 
-(defmacro from
-  "SQL-like syntax for capturing the source database.
-  e.g. (from mydb where :account \"my-account\")"
-  [db & where-clause]
-  `(~(if (empty? where-clause) 'where (first where-clause)) ~db ~@(rest where-clause)))
+(defmacro select
+  "return (optionally only certain keys of) records, optionally filtered by the 'where' clause, optionally ordered by the 'order-by' clause.
+  e.g. (select :name :code from mydb where :account \"my-account\" order-by :name)"
+  [& args]
+    `(parse-sql keep-keys ~args))
 
 
 (defn where-contains
@@ -222,4 +221,3 @@
     (swap! db p-rename records (apply concat (partition 2 keys-values)))
     (catch IllegalStateException e
       (println db-validation-error-message))))
-

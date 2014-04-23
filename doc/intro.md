@@ -107,7 +107,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => #{}
 ```
 
-The database can be saved to disk and load from disk with regular spit/slurp functions.
+#### The database can be saved to disk and load from disk with regular spit/slurp functions.
 
 ```clj
 ;save to disk
@@ -117,4 +117,17 @@ The database can be saved to disk and load from disk with regular spit/slurp fun
 (reset! db (read-string (slurp "my-db-as-file.data")))
 ;or
 (def new-db (atom (read-string (slurp "my-db-as-file.data"))))
+```
+
+#### If a validator is defined for the database, 'insert', 'update', 'delete-key' and 'rename-key'
+#### will return an error message if the conditions of the validator return false.
+
+```clj
+(defn db-validator [new-db] (if-not (empty? new-db) (apply distinct? (map :name new-db))))
+(set-validator! mydb db-validator)
+
+;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
+;trying to insert a new record with "name2" that already exists in the database
+(insert mydb :name "name2" :client "CL-3")
+=> database validation failed
 ```
