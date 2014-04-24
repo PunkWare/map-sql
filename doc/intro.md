@@ -131,5 +131,5 @@ will return the database unchanged if the conditions of the validator return fal
 ;trying to insert a new record with "name2" that already exists in the database...
 (insert mydb :name "name2" :client "CL-3")
 => #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
-;the database hasn't been updated.
+;returns the database unchanged.
 ```
