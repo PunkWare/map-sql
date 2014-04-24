@@ -121,14 +121,15 @@ the database can be saved to disk and load from disk with regular spit/slurp fun
 ```
 
 if a validator is defined for the database, 'insert', 'update', 'delete-key' and 'rename-key'
-will return an error message if the conditions of the validator return false.
+will return the database unchanged if the conditions of the validator return false.
 
 ```clj
-(defn db-validator [new-db] (if-not (empty? new-db) (apply distinct? (map :name new-db))))
+(defn db-validator [new-db] (if-not (empty? new-db) (apply distinct? (map :name new-db)) true))
 (set-validator! mydb db-validator)
 
 ;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
 ;trying to insert a new record with "name2" that already exists in the database...
 (insert mydb :name "name2" :client "CL-3")
-=> database validation failed
+=> #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
+;the database hasn't been updated.
 ```

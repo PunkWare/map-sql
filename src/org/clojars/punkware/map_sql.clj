@@ -8,9 +8,6 @@
    [clojure.string :refer [upper-case]]
    [inflections.core :refer [pluralize]]))
 
-(def ^{:private true :const true}
-  #^{:doc "the error message that is printed when a database validation error is detected."}
-  db-validation-error-message "database validation failed, maybe because of blank record, or ill-formed record. Operation aborted.")
 
 ; PRIVATE functions
 
@@ -166,7 +163,7 @@
   (try
     (swap! db p-insert (apply concat (partition 2 keys-values))) ;partition use to remove possible orphan key
     (catch IllegalStateException e
-      (println db-validation-error-message))))
+      @db)))
 
 
 (defn update
@@ -180,7 +177,7 @@
   (try
     (swap! db p-modify assoc records (apply concat (partition 2 keys-values))) ;partition use to remove possible orphan key
     (catch IllegalStateException e
-      (println db-validation-error-message))))
+      @db)))
 
 
 (defn delete
@@ -192,7 +189,7 @@
   (try
     (swap! db p-delete records)
     (catch IllegalStateException e
-      (println db-validation-error-message))))
+      @db)))
 
 
 (defn delete-key
@@ -206,7 +203,7 @@
   (try
     (swap! db p-modify dissoc records keys-to-delete)
     (catch IllegalStateException e
-      (println db-validation-error-message))))
+      @db)))
 
 
 (defn rename-key
@@ -220,4 +217,4 @@
   (try
     (swap! db p-rename records (apply concat (partition 2 keys-values)))
     (catch IllegalStateException e
-      (println db-validation-error-message))))
+      @db)))
