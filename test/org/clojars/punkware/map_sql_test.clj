@@ -1,6 +1,6 @@
 (ns #^{:doc "Testing suite for map-sql"
        :author "Jean-Marc Decouleur <punkware@free.fr>"
-       :version "0.3.3"}
+       :version "0.4.0"}
   org.clojars.punkware.map-sql-test
   (:require [clojure.test :refer :all]
             [org.clojars.punkware.map-sql :refer :all]))
@@ -108,9 +108,7 @@
          2)
         "after inserting a second different record, there should be 2 records in the database.")
 
-    (is (=
-         (count (insert db :name "bar" :account "foo-account" :code "foo-code"))
-         2)
+    (is (thrown? IllegalStateException (insert db :name "bar" :account "foo-account" :code "foo-code"))
         "after inserting a record causing validator to fail, there should still be 2 records in the database."))
 
 

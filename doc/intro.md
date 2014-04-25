@@ -78,8 +78,14 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => #{{:code 54321, :account "account1", :name "new-name"} {:code 12345, :account "account2", :name "name2"}}
 
 ;several criterias with logical 'or' comparison
+; :name = "name2" OR :code = 54321
 (select :name :account :code from mydb where :name "name2" :code 54321)
 => #{{:code 54321, :account "account1", :name "new-name"} {:code 12345, :account "account2", :name "name2"}}
+
+;nesting 'where' calls to perform logical 'and' comparison
+; :name = "name2" AND :code = 54321
+(select :name :account :code from (from db where :code 54321) where :name "name2")
+=> #{}
 
 ;returned in a specific order (ascending)
 (select :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
@@ -90,11 +96,12 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => #{{:account "account1", :name "new-name"} {:account "account2", :name "name2"}}
 ```
 
-'print-db' behaves just like 'select' but print result on screen.
+'select-screen' behaves just like 'select' but print result on screen.
+'select-pdf' behaves just like 'select' but generate a PDF file.
 
 ```clj
 ;pretty print records on screen
-(print-db :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
+(select-screen :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
 => |    :name | :account | :code |
 => |----------+----------+-------|
 => |    name2 | account2 | 12345 |
@@ -103,7 +110,11 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => 2 records printed.
 => nil
 
-;'delete' remove records from database.
+;generate a PDF file with the result of the query in a table format
+(select-pdf "doc.pdf" :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
+=> nil
+
+;'delete' remove records from database
 (delete mydb (where mydb :public-for-nsa true))
 => #{}
 ```
@@ -121,7 +132,7 @@ the database can be saved to disk and load from disk with regular spit/slurp fun
 ```
 
 if a validator is defined for the database, 'insert', 'update', 'delete-key' and 'rename-key'
-will return the database unchanged if the conditions of the validator return false.
+will throw an 'IllegalStateException' exception if the conditions of the validator return false.
 
 ```clj
 (defn db-validator [new-db] (if-not (empty? new-db) (apply distinct? (map :name new-db)) true))
@@ -130,6 +141,6 @@ will return the database unchanged if the conditions of the validator return fal
 ;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
 ;trying to insert a new record with "name2" that already exists in the database...
 (insert mydb :name "name2" :client "CL-3")
-=> #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
-;returns the database unchanged.
+=> IllegalStateException Invalid reference state
+;throws an exception. mydb is unchanged.
 ```

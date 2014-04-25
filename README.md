@@ -9,7 +9,7 @@ I publish releases to [Clojars]
 
 [Leiningen] dependency information:
 
-    [map-sql "0.3.3"]
+    [map-sql "0.4.0"]
 
 [Clojars]: http://clojars.org/map-sql
 [Leiningen]: http://leiningen.org/
@@ -86,8 +86,11 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1 and 1.6.0.
 ```
 
 ```clj
-;pretty print records on screen
-(print-db :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
+;pretty print records on screen in a table format.
+(select-screen :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
+
+;generate a PDF file with the result of the query in a table format.
+(select-pdf "doc.pdf" :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
 ```
 
 See the documentation for more details.
