@@ -93,7 +93,9 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1 and 1.6.0.
 (select-pdf "doc.pdf" :name :account :code from mydb where :name "name2" :code 54321 order-by :code)
 ```
 
-See the documentation for more details.
+See the [documentation] for more details.
+
+[documentation]: https://github.com/PunkWare/map-sql/blob/master/doc/intro.md
 
 ## License
 
