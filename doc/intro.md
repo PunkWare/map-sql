@@ -25,35 +25,35 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => #'user/mydb
 
 ;'insert' add a new record with specified keys and values. As side-effect mydb is updated.
-(insert mydb :name "name1" :account "account1" :code 12345)
+(in mydb insert :name "name1" :account "account1" :code 12345)
 => #{{:account "account1", :name "name1", :code 12345}}
 
 ;add a second record.
-(insert mydb :name "name2" :account "account2" :code 111222 :client "CL-2")
+(in mydb insert :name "name2" :account "account2" :code 111222 :client "CL-2")
 => #{{:account "account1", :name "name1", :code 12345} {:account "account2", :name "name2", :code 111222, :client "CL-2"}}
 
 ;'update' modify records having their values changed, or added, for the given keys.
 ; as side-effect mydb is updated.
-(update mydb (where mydb :account "account1") :code 54321 :name "new-name")
+(in mydb where :account "account1" update :code 54321 :name "new-name")
 => #{{:account "account2", :name "name2", :code 111222, :client "CL-2"} {:account "account1", :name "new-name", :code 54321}}
 
 ;'delete-key' modify records having their keys (and associated values) removed.
 ; as side-effect mydb is updated.
-(delete-key mydb (where mydb :account "account2") :client :code)
+(in mydb where :account "account2" delete-key :client :code)
 => #{{:account "account2", :name "name2"} {:account "account1", :name "new-name", :code 54321}}
 
 ;'update' can also modify records to add values for the given keys.
 ; as side-effect mydb is updated.
-(update mydb (where mydb :account "account2") :code 12345)
+(in mydb where :account "account2" update :code 12345)
 => #{{:account "account2", :name "name2", :code 12345} {:account "account1", :name "new-name", :code 54321}}
 
 ; can 'update' several records
-(update mydb (where mydb) :secret true)
+(in mydb update :secret true)
 => #{{:account "account2", :name "name2", :secret true, :code 12345} {:account "account1", :name "new-name", :secret true, :code 54321}}
 
 ;'rename-keys' modify records having their keys renamed with new values.
 ; as side-effect mydb is updated.
-(rename-key mydb (where mydb) :secret :public-for-nsa)
+(in mydb rename-key :secret :public-for-nsa)
 => #{{:account "account1", :name "new-name", :code 54321, :public-for-nsa true} {:account "account2", :name "name2", :code 12345, :public-for-nsa true}}
 ```
 
@@ -115,7 +115,7 @@ The database can be stored to disk, load from disk with regular spit/slurp funct
 => nil
 
 ;'delete' remove records from database
-(delete mydb (where mydb :public-for-nsa true))
+(in mydb where :public-for-nsa true delete)
 => #{}
 ```
 
@@ -140,7 +140,7 @@ will throw an 'IllegalStateException' exception if the conditions of the validat
 
 ;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
 ;trying to insert a new record with "name2" that already exists in the database...
-(insert mydb :name "name2" :client "CL-3")
+(in mydb insert :name "name2" :client "CL-3")
 => IllegalStateException Invalid reference state
 ;throws an exception. mydb is unchanged.
 ```

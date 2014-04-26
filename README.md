@@ -9,7 +9,7 @@ I publish releases to [Clojars]
 
 [Leiningen] dependency information:
 
-    [map-sql "0.4.0"]
+    [map-sql "0.5.0"]
 
 [Clojars]: http://clojars.org/map-sql
 [Leiningen]: http://leiningen.org/
@@ -32,32 +32,32 @@ I have successfully tested 'map-sql' with Clojure version 1.5.1 and 1.6.0.
 => #'user/mydb
 
 ;'insert' add a new record with specified keys and values. As side-effect mydb is updated.
-(insert mydb :name "name1" :account "account1" :code 12345)
+(in mydb insert :name "name1" :account "account1" :code 12345)
 
 ;add a second record.
-(insert mydb :name "name2" :account "account2" :code 111222 :client "CL-2")
+(in mydb insert :name "name2" :account "account2" :code 111222 :client "CL-2")
 
 ;'update' modify records having their values changed, or added, for the given keys.
 ; as side-effect mydb is updated.
-(update mydb (where mydb :account "account1") :code 54321 :name "new-name")
+(in mydb where :account "account1" update :code 54321 :name "new-name")
 
 ;'delete-key' modify records having their keys (and associated values) removed.
 ; as side-effect mydb is updated.
-(delete-key mydb (where mydb :account "account2") :client :code)
+(in mydb where :account "account2" delete-key :client :code)
 
 ;'update' can also modify records to add values for the given keys.
 ; as side-effect mydb is updated.
-(update mydb (where mydb :account "account2") :code 12345)
+(in mydb where :account "account2" update :code 12345)
 
 ; can 'update' several records
-(update mydb (where mydb) :secret true)
+(in mydb update :secret true)
 
 ;'rename-keys' modify records having their keys renamed with new values.
 ; as side-effect mydb is updated.
-(rename-key mydb (where mydb) :secret :public-for-nsa)
+(in mydb rename-key :secret :public-for-nsa)
 
 ;'delete' remove records from database.
-(delete mydb (where mydb :public-for-nsa true))
+(in mydb where :public-for-nsa true delete)
 ```
 
 'select' return records optionally filtered or ordered. Keys returned can be restricted.

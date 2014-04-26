@@ -1,6 +1,6 @@
 (ns #^{:doc "SQL-like syntax for maps."
        :author "Jean-Marc Decouleur <punkware@free.fr>"
-       :version "0.4.0"}
+       :version "0.5.0"}
   org.clojars.punkware.map-sql
   (:require
    [clojure.pprint :refer [print-table]]
@@ -59,16 +59,6 @@
   (println (str (pluralize (count records) "record") " printed.")))
 
 
-(defn- keep-keys
-  "return records having only keys given in keys-to-keep.
-  e.g. (keep-keys (from mydb where :account \"my-account\") :account :name)
-  FOR INTERNAL USE ONLY. Should not be called directly."
-  ([records] records)
-  ([records keys-to-keep]
-   (if (empty? keys-to-keep)
-     records
-     (apply sorted-set-by (fn [_ _] 1) (map #(select-keys % keys-to-keep) records)))))
-
 (defn- pdf-table
   "format the table in the PDF.
   FOR INTERNAL USE ONLY. Should not be called directly."
@@ -123,7 +113,7 @@
 
 
 (defmacro parse-sql
-  "convert SQL-like syntax to regular function calls.
+  "convert SQL-like syntax to regular query function calls.
   FOR INTERNAL USE ONLY. Should not be called directly."
   [output args]
   (let
@@ -156,6 +146,33 @@
   e.g. (select-pdf \"doc.pdf\" :name :code from mydb where :account \"my-account\" order-by :name)"
   [filename & args]
   `((parse-sql [partial #'org.clojars.punkware.map-sql/pdf-main] ~args) ~filename))
+
+
+(defmacro in
+  "convert SQL-like syntax to regular updating function calls."
+  [& args]
+  (let
+    [fn-args (drop-while #(and (not= 'update %) (not= 'insert %) (not= 'delete %) (not= 'delete-key %) (not= 'rename-key %)) args)
+     where-args (drop-while #(and (not= 'where %) (not= 'where-contains %)) (take-while #(and (not= 'update %) (not= 'insert %) (not= 'delete %) (not= 'delete-key %) (not= 'rename-key %)) args))
+     ;where (if-not (empty? where-args) (list (list* (first where-args) (first args) (rest where-args))) '())]
+     where (if (= (first fn-args) 'insert)
+             '()
+             (if-not (empty? where-args)
+               (list (list* (first where-args) (first args) (rest where-args)))
+               (list (list 'where (first args)))))]
+    `(~(first fn-args) ~(first args)
+       ~@where
+       ~@(when-not (empty? (rest fn-args)) (rest fn-args)))))
+
+
+(defn keep-keys
+  "return records having only keys given in keys-to-keep.
+  e.g. (keep-keys (from mydb where :account \"my-account\") :account :name)"
+  ([records] records)
+  ([records keys-to-keep]
+   (if (empty? keys-to-keep)
+     records
+     (apply sorted-set-by (fn [_ _] 1) (map #(select-keys % keys-to-keep) records)))))
 
 
 (defn where-contains

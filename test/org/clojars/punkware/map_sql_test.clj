@@ -1,6 +1,6 @@
 (ns #^{:doc "Testing suite for map-sql"
        :author "Jean-Marc Decouleur <punkware@free.fr>"
-       :version "0.4.0"}
+       :version "0.5.0"}
   org.clojars.punkware.map-sql-test
   (:require [clojure.test :refer :all]
             [org.clojars.punkware.map-sql :refer :all]))
@@ -18,37 +18,37 @@
 (testing "map-sql"
   (deftest filter-records
     (is (=
-         (get (first (where db :account "bar-account")) :code)
+         (get (first (from db where :account "bar-account")) :code)
          "bar-code")
         "a first record with :code equals to \"bar-code\" should exist.")
 
     (is (=
-         (get (first (where db :account "foo")) :account)
+         (get (first (from db where :account "foo")) :account)
          nil)
         "a first record with :account equals to \"foo\" should not exist.")
 
     (is (=
-         (get (first (where db :foo "bar-account")) :code)
+         (get (first (from db where :foo "bar-account")) :code)
          nil)
         "a first record with key :foo should not exist.")
 
     (is (=
-         (get (first (where-contains db :account "bar")) :account)
+         (get (first (from db where-contains :account "bar")) :account)
          "bar-account")
         "a first record with key :foo should not exist.")
 
     (is (=
-         (empty? (where db :account "foo"))
+         (empty? (from db where :account "foo"))
          true)
         "there should be no records where :account is equal to \"foo\".")
 
     (is (=
-         (empty? (where db :account))
+         (empty? (from db where :account))
          true)
         "there should be no records when :account is not defined.")
 
     (is (=
-         (get (first (where db)) :code)
+         (get (first (from db where)) :code)
          "bar-code")
         "when 'where' is called without variadic arguments, the whole database should be returned.")
 
@@ -104,7 +104,7 @@
 
   (deftest insert-record
     (is (=
-         (count (insert db :name "foo" :account "foo-account" :code "foo-code"))
+         (count (in db insert :name "foo" :account "foo-account" :code "foo-code"))
          2)
         "after inserting a second different record, there should be 2 records in the database.")
 
@@ -114,53 +114,53 @@
 
   (deftest update-records
     (is (=
-         (get (first (update db (where db :name "foo") :code "mynewcode")) :code)
+         (get (first (in db where :name "foo" update :code "mynewcode")) :code)
          "bar-code")
         "after trying to update a record that doesn't exist, the old value should still be there.")
 
     (is (=
-         (get (first (update db (where db :name "bar") :code "mynewcode")) :code)
+         (get (first (in db where :name "bar" update :code "mynewcode")) :code)
          "mynewcode")
         "after updating the record, :code should be equal to \"mynewcode\"."))
 
 
   (deftest delete-keys
     (is (=
-         (get (first (delete-key db (where db :name "bar") :code2)) :code)
+         (get (first (in db where :name "bar" delete-key :code2)) :code)
          "bar-code")
         "after trying to delete an unexisting key in the first record, :code should still be there.")
 
     (is (=
-         (get (first (delete-key db (where db :name "bar") :code)) :code)
+         (get (first (in db where :name "bar" delete-key :code)) :code)
          nil)
         "after deleting the :code key in the first record, :code should not exist anymore."))
 
 
   (deftest rename-keys
     (is (=
-         (get (first (rename-key db (where db :name "bar") :test :fail)) :fail)
+         (get (first (in db where :name "bar" rename-key :test :fail)) :fail)
          nil)
         "after trying to rename a key that doesn't exist in the first record, the renamed key should not exist.")
 
     (is (=
-         (get (first (rename-key db (where db :name "bar") :code :password)) :code)
+         (get (first (in db where :name "bar" rename-key :code :password)) :code)
          nil)
         "after renaming a key in the first record, :code should not exist anymore.")
 
     (is (=
-         (get (first (rename-key db (where db :name "bar") :code :password)) :password)
+         (get (first (in db where :name "bar" rename-key :code :password)) :password)
          "bar-code")
         "after renaming a key in the first record, :code should now be named :password."))
 
 
   (deftest delete-records
     (is (=
-         (count (delete db (where db :name "foo")))
+         (count (in db where :name "foo" delete))
          1)
         "after trying to delete a record that doesn't exist, there should still be one record in the database.")
 
     (is (=
-         (count (delete db (where db :name "bar")))
+         (count (in db where :name "bar" delete))
          0)
         "after deleting the record, there should be zero record in the database.")))
 
