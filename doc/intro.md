@@ -138,9 +138,17 @@ will throw an 'IllegalStateException' exception if the conditions of the validat
 (defn db-validator [new-db] (if-not (empty? new-db) (apply distinct? (map :name new-db)) true))
 (set-validator! mydb db-validator)
 
-;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222} {:name "name1", :account "account1", :code 12345}}
+;if mydb contains #{{:name "name2", :client "CL-2", :account "account2", :code 111222}}
 ;trying to insert a new record with "name2" that already exists in the database...
+
 (in mydb insert :name "name2" :client "CL-3")
 => IllegalStateException Invalid reference state
+
 ;throws an exception. mydb is unchanged.
+
+;you can manage the exception in your code by using try / catch
+(try
+ (in mydb insert :name "name2" :client "CL-3")
+ (catch IllegalStateException e
+  (.printStackTrace e))) ;or any other instruction to resume to normal
 ```
