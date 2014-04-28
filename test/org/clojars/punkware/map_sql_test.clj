@@ -103,6 +103,15 @@
 
 
   (deftest insert-record
+    (is (thrown? AssertionError (in db insert))
+        "insert called without arguments should throw an exception.")
+
+    (is (thrown? AssertionError (in db insert :name))
+        "insert called with only one argument should throw an exception.")
+
+    (is (thrown? AssertionError (in db insert "name" "foo"))
+        "insert called with a key not being a keyword should throw an exception.")
+
     (is (=
          (count (in db insert :name "foo" :account "foo-account" :code "foo-code"))
          2)
@@ -113,6 +122,18 @@
 
 
   (deftest update-records
+    (is (thrown? AssertionError (in db update))
+        "update called without arguments should throw an exception.")
+
+    (is (thrown? AssertionError (in db update :name))
+        "update called with only one argument should throw an exception.")
+
+    (is (thrown? AssertionError (in db update "name" "foo"))
+        "update called with a key not being a keyword should throw an exception.")
+
+    (is (thrown? AssertionError (in #{[1 2]} update :name "foo"))
+        "update called with a where clause not returning a set of maps should throw an exception.")
+
     (is (=
          (get (first (in db where :name "foo" update :code "mynewcode")) :code)
          "bar-code")
@@ -125,6 +146,15 @@
 
 
   (deftest delete-keys
+    (is (thrown? AssertionError (in db delete-key))
+        "delete-key called without arguments should throw an exception.")
+
+    (is (thrown? AssertionError (in db delete-key "name"))
+        "delete-key called with a key not being a keyword should throw an exception.")
+
+    (is (thrown? AssertionError (in #{[1 2]} delete-key :name))
+        "delete-key called with a where clause not returning a set of maps should throw an exception.")
+
     (is (=
          (get (first (in db where :name "bar" delete-key :code2)) :code)
          "bar-code")
@@ -137,6 +167,18 @@
 
 
   (deftest rename-keys
+    (is (thrown? AssertionError (in db rename-key))
+        "rename-key called without arguments should throw an exception.")
+
+    (is (thrown? AssertionError (in db rename-key :name))
+        "rename-key called with only one argument should throw an exception.")
+
+    (is (thrown? AssertionError (in db rename-key "name" "foo"))
+        "rename-key called with a key not being a keyword should throw an exception.")
+
+    (is (thrown? AssertionError (in #{[1 2]} rename-key :name "foo"))
+        "rename-key called with a where clause not returning a set of maps should throw an exception.")
+
     (is (=
          (get (first (in db where :name "bar" rename-key :test :fail)) :fail)
          nil)
@@ -154,6 +196,9 @@
 
 
   (deftest delete-records
+    (is (thrown? AssertionError (in #{[1 2]} delete))
+        "delete called with a where clause not returning a set of maps should throw an exception.")
+
     (is (=
          (count (in db where :name "foo" delete))
          1)
