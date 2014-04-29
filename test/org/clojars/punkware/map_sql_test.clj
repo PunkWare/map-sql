@@ -134,6 +134,9 @@
     (is (thrown? AssertionError (in #{[1 2]} update :name "foo"))
         "update called with a where clause not returning a set of maps should throw an exception.")
 
+    (is (thrown? AssertionError (in [{:name "bar" :account "bar-account" :code "bar-code"}] update :name "foo"))
+        "update called with a where clause not returning a set should throw an exception.")
+
     (is (=
          (get (first (in db where :name "foo" update :code "mynewcode")) :code)
          "bar-code")
@@ -154,6 +157,9 @@
 
     (is (thrown? AssertionError (in #{[1 2]} delete-key :name))
         "delete-key called with a where clause not returning a set of maps should throw an exception.")
+
+    (is (thrown? AssertionError (in [{:name "bar" :account "bar-account" :code "bar-code"}] delete-key :name))
+        "delete-key called with a where clause not returning a set should throw an exception.")
 
     (is (=
          (get (first (in db where :name "bar" delete-key :code2)) :code)
@@ -179,6 +185,9 @@
     (is (thrown? AssertionError (in #{[1 2]} rename-key :name "foo"))
         "rename-key called with a where clause not returning a set of maps should throw an exception.")
 
+    (is (thrown? AssertionError (in [{:name "bar" :account "bar-account" :code "bar-code"}] rename-key :name "foo"))
+        "rename-key called with a where clause not returning a set should throw an exception.")
+
     (is (=
          (get (first (in db where :name "bar" rename-key :test :fail)) :fail)
          nil)
@@ -198,6 +207,9 @@
   (deftest delete-records
     (is (thrown? AssertionError (in #{[1 2]} delete))
         "delete called with a where clause not returning a set of maps should throw an exception.")
+
+    (is (thrown? AssertionError (in [{:name "bar" :account "bar-account" :code "bar-code"}] delete))
+        "delete called with a where clause not returning a set should throw an exception.")
 
     (is (=
          (count (in db where :name "foo" delete))
