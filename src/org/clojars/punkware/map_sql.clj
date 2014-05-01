@@ -3,11 +3,11 @@
        :version "0.5.0"}
   org.clojars.punkware.map-sql
   (:require
-   [clojure.pprint :refer [print-table]]
-   [clojure.set :refer [difference union rename]]
-   [clojure.string :refer [upper-case]]
-   [inflections.core :refer [pluralize]]
-   [clj-pdf.core :refer [pdf]]))
+    [clojure.pprint :refer [print-table]]
+    [clojure.set :refer [difference union rename]]
+    [clojure.string :refer [upper-case]]
+    [inflections.core :refer [pluralize]]
+    [clj-pdf.core :refer [pdf]]))
 
 
 ; PRIVATE functions
@@ -23,8 +23,8 @@
   "FOR INTERNAL USE ONLY. Should not be called directly."
   [db kindof-update records updates]
   (union
-   (p-delete db records)
-   (set (map #(apply kindof-update %1 updates) records))))
+    (p-delete db records)
+    (set (map #(apply kindof-update %1 updates) records))))
 
 
 (defn- p-insert
@@ -39,8 +39,8 @@
   [db records updates]
   (let [updates-as-hash (apply hash-map updates)]
     (union
-     (p-delete db records)
-     (rename records updates-as-hash))))
+      (p-delete db records)
+      (rename records updates-as-hash))))
 
 
 (defn- table-screen
@@ -49,12 +49,12 @@
   [records keys-to-display]
   (if-not (empty? records)
     (print-table
-     (if (empty? keys-to-display)
-       (sort (distinct (apply concat (map keys records))))
-       ;;ou
-       ;;(keys (into (sorted-map) records))
-       keys-to-display)
-     records))
+      (if (empty? keys-to-display)
+        (sort (distinct (apply concat (map keys records))))
+        ;;ou
+        ;;(keys (into (sorted-map) records))
+        keys-to-display)
+      records))
   (println)
   (println (str (pluralize (count records) "record") " printed.")))
 
@@ -64,9 +64,9 @@
   FOR INTERNAL USE ONLY. Should not be called directly."
   [headers column-widths rows]
   (into [] (concat
-            [:pdf-table column-widths]
-            [(mapv #(vector :pdf-cell [:paragraph {:style :bold :align :center} (name %)]) headers)]
-            (mapv #(mapv (fn [element] [:pdf-cell (if (integer? element) {:align :right} {:align :left})(str element)]) %) rows))))
+             [:pdf-table column-widths]
+             [(mapv #(vector :pdf-cell [:paragraph {:style :bold :align :center} (name %)]) headers)]
+             (mapv #(mapv (fn [element] [:pdf-cell (if (integer? element) {:align :right} {:align :left})(str element)]) %) rows))))
 
 
 (defn- pdf-main
@@ -77,22 +77,22 @@
                   (sort (distinct (apply concat (map keys records))))
                   headers-raw)]
     (pdf
-     [{:title "map-sql" :size :a4 :orientation :landscape}
-      (pdf-table
-       headers
-       (into []
-             (let [sizes (for [x headers]
-                           (apply max
-                                  (map #(if (integer? (x %)) 5 (count (x %)))
-                                       records)))
-                   total (reduce + sizes)]
-               (map
-                #(Math/round
-                  (* 100.0 (/ % total)))
-                sizes)))
-       (mapv #(for [k headers] (get % k ""))
-             records))]
-     pdf-file)))
+      [{:title "map-sql" :size :a4 :orientation :landscape}
+       (pdf-table
+         headers
+         (into []
+               (let [sizes (for [x headers]
+                             (apply max
+                                    (map #(if (integer? (x %)) 5 (count (x %)))
+                                         records)))
+                     total (reduce + sizes)]
+                 (map
+                   #(Math/round
+                      (* 100.0 (/ % total)))
+                   sizes)))
+         (mapv #(for [k headers] (get % k ""))
+               records))]
+      pdf-file)))
 
 
 ; PUBLIC functions and macros
@@ -121,10 +121,10 @@
      where-args (drop-while #(not= 'from %)(take-while #(not= 'order-by %) args))
      display-args (take-while #(and (not= 'from %) (not= 'order-by %)) args)]
     `(~@output
-      ~(if (empty? order-by-args)
-         where-args
-         `(order-by ~where-args ~@(rest order-by-args)))
-      ~(if (empty? display-args) [] (vec display-args)))))
+       ~(if (empty? order-by-args)
+          where-args
+          `(order-by ~where-args ~@(rest order-by-args)))
+       ~(if (empty? display-args) [] (vec display-args)))))
 
 
 (defmacro select-screen
@@ -154,15 +154,14 @@
   (let
     [fn-args (drop-while #(and (not= 'update %) (not= 'insert %) (not= 'delete %) (not= 'delete-key %) (not= 'rename-key %)) args)
      where-args (drop-while #(and (not= 'where %) (not= 'where-contains %)) (take-while #(and (not= 'update %) (not= 'insert %) (not= 'delete %) (not= 'delete-key %) (not= 'rename-key %)) args))
-     ;where (if-not (empty? where-args) (list (list* (first where-args) (first args) (rest where-args))) '())]
      where (if (= (first fn-args) 'insert)
              '()
              (if-not (empty? where-args)
                (list (list* (first where-args) (first args) (rest where-args)))
                (list (list 'where (first args)))))]
     `(~(first fn-args) ~(first args)
-       ~@where
-       ~@(when-not (empty? (rest fn-args)) (rest fn-args)))))
+        ~@where
+        ~@(when-not (empty? (rest fn-args)) (rest fn-args)))))
 
 
 (defn keep-keys
@@ -184,14 +183,14 @@
                 database))
   ([database & keys-values]
    (set
-    (apply concat
-           (for [[k v] (partition 2 keys-values)]
-             (filter #(re-find
-                       (re-pattern (upper-case v))
-                       (upper-case (get %1 k "")))
-                     (if (= (type database) clojure.lang.Atom)
-                       @database
-                       database)))))))
+     (apply concat
+            (for [[k v] (partition 2 keys-values)]
+              (filter #(re-find
+                         (re-pattern (upper-case v))
+                         (upper-case (get %1 k "")))
+                      (if (= (type database) clojure.lang.Atom)
+                        @database
+                        database)))))))
 
 
 (defn where
@@ -203,8 +202,8 @@
                 database))
   ([database & keys-values]
    (set (filter #(some
-                  (set (partition 2 keys-values))
-                  (seq %))
+                   (set (partition 2 keys-values))
+                   (seq %))
                 (if (= (type database) clojure.lang.Atom)
                   @database
                   database)))))
