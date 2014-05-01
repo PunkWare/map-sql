@@ -1,4 +1,4 @@
-(defproject map-sql "0.5.0"
+(defproject map-sql "0.5.1"
   :description "SQL-like syntax for maps."
   :url "https://github.com/PunkWare/map-sql"
   :license {:name "Eclipse Public License"

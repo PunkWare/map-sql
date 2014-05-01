@@ -1,6 +1,6 @@
 (ns #^{:doc "SQL-like syntax for maps."
        :author "Jean-Marc Decouleur <punkware@free.fr>"
-       :version "0.5.0"}
+       :version "0.5.1"}
   org.clojars.punkware.map-sql
   (:require
     [clojure.pprint :refer [print-table]]
