@@ -178,10 +178,15 @@
   "filter the records in database according to the specified keys and values. if none specified, returns all records.
   The filter is based on 'contains' comparison and do logical 'or' comparison between keys.
   e.g. (where-contains mydb :account \"account\")"
-  ([database] (if (= (type database) clojure.lang.Atom)
-                @database
-                database))
+  ([database]
+   {:post [(or (set? %) (seq? %)) ; when 'where' return an empty seq
+           (every? map? %)]}
+   (if (= (type database) clojure.lang.Atom)
+     @database
+     database))
   ([database & keys-values]
+   {:post [(or (set? %) (seq? %)) ; when 'where' return an empty seq
+           (every? map? %)]}
    (set
      (apply concat
             (for [[k v] (partition 2 keys-values)]
@@ -197,16 +202,21 @@
   "filter the records in database according to the specified keys and values. if none specified, returns all records.
   The filter is based on strict comparison and do logical 'or' comparison between keys.
   e.g. (where- mydb :account \"my-account\")"
-  ([database] (if (= (type database) clojure.lang.Atom)
-                @database
-                database))
+  ([database]
+   {:post [(or (set? %) (seq? %)) ; when 'where' return an empty seq
+           (every? map? %)]}
+   (if (= (type database) clojure.lang.Atom)
+     @database
+     database))
   ([database & keys-values]
-   (set (filter #(some
-                   (set (partition 2 keys-values))
-                   (seq %))
-                (if (= (type database) clojure.lang.Atom)
-                  @database
-                  database)))))
+   {:post [(or (set? %) (seq? %)) ; when 'where' return an empty seq
+           (every? map? %)]}
+   (clojure.set/select #(some
+                          (set (partition 2 keys-values))
+                          (seq %))
+                       (if (= (type database) clojure.lang.Atom)
+                         @database
+                         database))))
 
 
 (defn order-by
