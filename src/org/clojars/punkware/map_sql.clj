@@ -202,9 +202,9 @@
                 @database
                 database))
   ([database & keys-values]
-   (set (filter #(not (not-any?
-                       (set (partition 2 keys-values))
-                       (seq %)))
+   (set (filter #(some
+                  (set (partition 2 keys-values))
+                  (seq %))
                 (if (= (type database) clojure.lang.Atom)
                   @database
                   database)))))
